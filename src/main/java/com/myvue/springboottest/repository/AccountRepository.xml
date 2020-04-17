@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myvue.springboottest.repository.AccountRepository">
+    <insert id="save" parameterType="com.myvue.springboottest.entity.Account">
+        insert into account (account_id,account_name,password,is_admin,user_name,max_lend_number,left_lend_number) values (#{account_id},#{account_name},#{password},#{is_admin},#{user_name},#{max_lend_number},#{left_lend_number})
+    </insert>
+
+    <select id="findAll" resultType="com.myvue.springboottest.entity.Account">
+        select * from account
+    </select>
+
+    <select id="findById" parameterType="java.lang.Integer" resultType="com.myvue.springboottest.entity.Account">
+        select * from account where account_id = #{id}
+    </select>
+
+    <select id="findByIdForUpdate" parameterType="java.lang.Integer" resultType="com.myvue.springboottest.entity.Account">
+        select * from account where account_id = #{id} for update
+    </select>
+
+    <select id="findByName" parameterType="java.lang.String" resultType="com.myvue.springboottest.entity.Account">
+        select * from account where account_name = #{name}
+    </select>
+
+    <update id="update" parameterType="com.myvue.springboottest.entity.Account">
+        update account
+        <set>
+            <if test="password!=null">
+                password = #{password},
+            </if>
+            <if test="is_admin!=null">
+                is_admin = #{is_admin},
+            </if>
+            <if test="user_name!=null">
+                user_name = #{user_name},
+            </if>
+            <if test="max_lend_number!=null">
+                max_lend_number = #{max_lend_number}
+            </if>
+        </set>
+        where account_id = #{account_id}
+    </update>
+
+    <update id="borrowByAccountId" parameterType="java.lang.Integer">
+        update account set left_lend_number = left_lend_number - 1 where account_id = #{account_id}
+    </update>
+
+    <update id="returnByAccountId" parameterType="java.lang.Integer">
+        update account set left_lend_number = left_lend_number + 1 where account_id = #{account_id}
+    </update>
+
+</mapper>

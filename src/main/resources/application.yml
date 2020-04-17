@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/library?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  redis:
+    host: localhost
+    port: 6379
+    max-wait: 30000
+    max-active: 100
+    max-idle: 20
+    min-idle: 0
+    timeout: 3000
+
+
+mybatis:
+  mapper-locations: classpath:repository/*Repository.xml
+  type-aliases-package: com.myvue.springboottest.entity
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+
+server:
+  port: 8181

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myvue.springboottest.repository.BookRepository">
+    
+    <resultMap id="bookMap" type="com.myvue.springboottest.entity.Book">
+        <id column="book_id" property="book_id"></id>
+        <result column="name" property="name"></result>
+        <result column="author" property="author"></result>
+        <result column="ISBN" property="isbn"></result>
+        <result column="introduction" property="introduction"></result>
+        <result column="language" property="language"></result>
+        <result column="pubdate" property="pubdate"></result>
+        <result column="class_id" property="class_id"></result>
+        <result column="left_number" property="left_number"></result>
+        <association property="category" javaType="com.myvue.springboottest.entity.Category">
+            <id column="c_id" property="class_id"></id>
+            <result column="c_name" property="class_name"></result>
+        </association>
+    </resultMap>
+    
+    <insert id="save" parameterType="com.myvue.springboottest.entity.Book">
+        insert into book (book_id,name,author,ISBN,introduction,language,pubdate,class_id,left_number) values (#{book_id},#{name},#{author},#{isbn},#{introduction},#{language},#{pubdate},#{class_id},#{left_number})
+    </insert>
+
+    <select id="findAll" resultMap="bookMap">
+        select b.book_id,b.name,b.author,b.ISBN,b.introduction,b.language,b.pubdate,b.class_id,b.left_number,c.class_id c_id,c.class_name c_name from book b LEFT JOIN category c ON b.class_id = c.class_id
+    </select>
+
+    <select id="findById" parameterType="java.lang.Integer" resultMap="bookMap">
+        select b.book_id,b.name,b.author,b.ISBN,b.introduction,b.language,b.pubdate,b.class_id,b.left_number,c.class_id c_id,c.class_name c_name from book b LEFT JOIN category c ON b.class_id = c.class_id WHERE book_id = #{book_id}
+    </select>
+
+    <select id="findByIdForUpdate" parameterType="java.lang.Integer" resultMap="bookMap">
+        select book_id, left_number from book WHERE book_id = #{book_id} for update
+    </select>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from book where book_id = #{book_id}
+    </delete>
+
+    <update id="update" parameterType="com.myvue.springboottest.entity.Book">
+        update book
+        <set>
+            <if test="name!=null">
+                name = #{name},
+            </if>
+            <if test="author!=null">
+                author = #{author},
+            </if>
+            <if test="isbn!=null">
+                ISBN = #{isbn},
+            </if>
+            introduction = #{introduction},
+            language = #{language},
+            pubdate = #{pubdate},
+            class_id = #{class_id},
+            left_number = #{left_number}
+        </set>
+        where book_id = #{book_id}
+    </update>
+
+    <update id="bookBorrowedByBookId" parameterType="java.lang.Integer">
+        update book set left_number = left_number - 1 where book_id = #{book_id}
+    </update>
+
+    <update id="bookReturnedByBookId" parameterType="java.lang.Integer">
+        update book set left_number = left_number + 1 where book_id = #{book_id}
+    </update>
+
+</mapper>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myvue.springboottest.repository.LendListRepository">
+
+    <resultMap id="LentMap" type="com.myvue.springboottest.entity.LendList">
+        <id column="lend_id" property="lend_id"></id>
+        <result column="book_id" property="book_id"></result>
+        <result column="account_id" property="account_id"></result>
+        <result column="lend_date" property="lend_date"></result>
+        <result column="back_date" property="back_date"></result>
+        <association property="book" javaType="com.myvue.springboottest.entity.Book">
+            <id column="b_id" property="book_id"></id>
+            <result column="b_name" property="name"></result>
+        </association>
+        <association property="account" javaType="com.myvue.springboottest.entity.Account">
+            <id column="a_id" property="account_id"></id>
+            <result column="a_name" property="account_name"></result>
+            <result column="a_user_name" property="user_name"></result>
+        </association>
+
+    </resultMap>
+
+    <select id="findAll" resultMap="LentMap">
+        SELECT
+        l.lend_id, l.book_id, l.account_id, l.lend_date, l.back_date, b.book_id b_id, b.name b_name, a.account_id a_id, a.account_name a_name, a.user_name a_user_name
+        FROM
+        (lend_list l LEFT JOIN book b on l.book_id = b.book_id)
+        LEFT JOIN
+        account a
+        on
+        l.account_id = a.account_id
+    </select>
+
+    <select id="findByAccountId" parameterType="java.lang.Integer" resultMap="LentMap">
+        SELECT l.lend_id, l.book_id, l.account_id, l.lend_date, l.back_date, b.book_id b_id, b.name b_name, a.account_id a_id, a.account_name a_name, a.user_name a_user_name
+        FROM
+        (lend_list l LEFT JOIN book b on l.book_id = b.book_id)
+        LEFT JOIN
+        account a
+        on
+        l.account_id = a.account_id
+        where
+        a_id = #{id}
+    </select>
+
+    <select id="findByAccountIdRended" parameterType="java.lang.Integer" resultMap="LentMap">
+        SELECT l.lend_id, l.book_id, l.account_id, l.lend_date, l.back_date, b.book_id b_id, b.name b_name, a.account_id a_id, a.account_name a_name, a.user_name a_user_name
+        FROM
+        (lend_list l LEFT JOIN book b on l.book_id = b.book_id)
+        LEFT JOIN
+        account a
+        on
+        l.account_id = a.account_id
+        where
+        a.account_id = #{id} and l.back_date is null
+    </select>
+
+    <select id="findByAccountIdHistory" parameterType="java.lang.Integer" resultMap="LentMap">
+        SELECT l.lend_id, l.book_id, l.account_id, l.lend_date, l.back_date, b.book_id b_id, b.name b_name, a.account_id a_id, a.account_name a_name, a.user_name a_user_name
+        FROM
+        (lend_list l LEFT JOIN book b on l.book_id = b.book_id)
+        LEFT JOIN
+        account a
+        on
+        l.account_id = a.account_id
+        where
+        a.account_id = #{id} and l.back_date is not null
+    </select>
+
+    <select id="findByBookId" parameterType="java.lang.Integer" resultMap="LentMap">
+        SELECT l.lend_id, l.book_id, l.account_id, l.lend_date, l.back_date, b.book_id b_id, b.name b_name, a.account_id a_id, a.account_name a_name, a.user_name a_user_name
+        FROM
+        (lend_list l LEFT JOIN book b on l.book_id = b.book_id)
+        LEFT JOIN
+        account a
+        on
+        l.account_id = a.account_id
+        where b_id = #{id}
+    </select>
+
+    <select id="findByUserName" parameterType="java.lang.String" resultMap="LentMap">
+        SELECT l.lend_id, l.book_id, l.account_id, l.lend_date, l.back_date, b.book_id b_id, b.name b_name, a.account_id a_id, a.account_name a_name, a.user_name a_user_name
+        FROM
+        (lend_list l LEFT JOIN book b on l.book_id = b.book_id)
+        LEFT JOIN
+        account a
+        on
+        l.account_id = a.account_id
+        where a_user_name = #{user_name}
+    </select>
+    
+    <select id="findByLendIdForUpdate" parameterType="java.lang.Integer" resultType="com.myvue.springboottest.entity.LendList">
+        select * from lend_list where lend_id = #{lend_id} for update
+    </select>
+
+    <select id="retrieval" resultMap="LentMap">
+        SELECT l.lend_id, l.book_id, l.account_id, l.lend_date, l.back_date, b.book_id b_id, b.name b_name, a.account_id a_id, a.account_name a_name, a.user_name a_user_name
+        FROM
+        (lend_list l LEFT JOIN book b on l.book_id = b.book_id)
+        LEFT JOIN
+        account a
+        on
+        l.account_id = a.account_id
+        where ${where}
+    </select>
+
+    <insert id="save" parameterType="com.myvue.springboottest.entity.LendList">
+        insert into lend_list (lend_id,book_id,account_id,lend_date) values (#{lend_id},#{book_id},#{account_id},#{lend_date})
+    </insert>
+
+    <update id="returnBook">
+        update lend_list set back_date = #{param2} where lend_id = #{param1}
+    </update>
+    
+
+</mapper>
