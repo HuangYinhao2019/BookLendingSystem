@@ -18,11 +18,13 @@ public interface BookRepository{
 
     int save(Book book);
     List<Book> findAll();
+    List<Book> findOffBooks();
     Book findById(Integer id);
     int deleteById(Integer id);
     int update(Book book);
     Book findByIdForUpdate(Integer id);
     int bookBorrowedByBookId(Integer id);
     int bookReturnedByBookId(Integer id);
+
 
 }

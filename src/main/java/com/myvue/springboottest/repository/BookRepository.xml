@@ -24,7 +24,11 @@
     </insert>
 
     <select id="findAll" resultMap="bookMap">
-        select b.book_id,b.name,b.author,b.ISBN,b.introduction,b.language,b.pubdate,b.class_id,b.left_number,c.class_id c_id,c.class_name c_name from book b LEFT JOIN category c ON b.class_id = c.class_id
+        select b.book_id,b.name,b.author,b.ISBN,b.introduction,b.language,b.pubdate,b.class_id,b.left_number,c.class_id c_id,c.class_name c_name from book b LEFT JOIN category c ON b.class_id = c.class_id where b.is_on = 1
+    </select>
+
+    <select id="findOffBooks" resultMap="bookMap">
+        select b.book_id,b.name,b.author,b.ISBN,b.introduction,b.language,b.pubdate,b.class_id,b.left_number,c.class_id c_id,c.class_name c_name from book b LEFT JOIN category c ON b.class_id = c.class_id where b.is_on = 0
     </select>
 
     <select id="findById" parameterType="java.lang.Integer" resultMap="bookMap">
@@ -36,7 +40,7 @@
     </select>
 
     <delete id="deleteById" parameterType="java.lang.Integer">
-        delete from book where book_id = #{book_id}
+        update book set is_on = 0 where book_id = #{book_id}
     </delete>
 
     <update id="update" parameterType="com.myvue.springboottest.entity.Book">

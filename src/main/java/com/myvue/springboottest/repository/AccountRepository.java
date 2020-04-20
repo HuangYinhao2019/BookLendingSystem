@@ -20,6 +20,7 @@ public interface AccountRepository {
     Account findById(Integer id);
     Account findByName(String name);
     int update(Account account);
+    int updateForLend(Integer id, Integer left_lend_number);
     Account findByIdForUpdate(Integer id);
     int borrowByAccountId(Integer id);
     int returnByAccountId(Integer id);

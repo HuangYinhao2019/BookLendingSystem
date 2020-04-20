@@ -18,7 +18,6 @@ spring:
     min-idle: 0
     timeout: 3000
 
-
 mybatis:
   mapper-locations: classpath:repository/*Repository.xml
   type-aliases-package: com.myvue.springboottest.entity
@@ -29,6 +28,12 @@ pagehelper:
   supportMethodsArguments: true
   params: count=countSql
 
-
 server:
   port: 8181
+
+logging:
+  level:
+    com:
+      myvue:
+        springboottest:
+          repository: debug

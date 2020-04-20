@@ -26,6 +26,7 @@ public class Book {
     private Date pubdate;
     private Integer left_number;
     private Integer class_id;
+    private Integer is_on;
     @OneToOne
     private Category category;
 

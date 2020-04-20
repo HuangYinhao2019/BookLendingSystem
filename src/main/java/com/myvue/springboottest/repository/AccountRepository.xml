@@ -41,6 +41,10 @@
         where account_id = #{account_id}
     </update>
 
+    <update id="updateForLend">
+        update account set left_lend_number = #{param2} where account_id = #{param1}
+    </update>
+
     <update id="borrowByAccountId" parameterType="java.lang.Integer">
         update account set left_lend_number = left_lend_number - 1 where account_id = #{account_id}
     </update>
