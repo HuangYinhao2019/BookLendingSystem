@@ -3,9 +3,14 @@ package com.myvue.springboottest.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.myvue.springboottest.entity.Book;
+import com.myvue.springboottest.pojo.BookRetrievalPOJO;
 import com.myvue.springboottest.service.BookService;
+import com.myvue.springboottest.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 
 /**
@@ -21,9 +26,20 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
+    @Resource
+    private RedisUtil redisUtil;
+
     @GetMapping("/findAll/{page}/{size}")
     public PageInfo findAll(@PathVariable("page") Integer currentpage, @PathVariable("size") Integer size){
-        PageInfo pageInfo = PageHelper.startPage(currentpage, size).doSelectPageInfo(() -> bookService.findAll());
+        String ps = "page" + String.valueOf(currentpage) + "size" + String.valueOf(size);
+        PageInfo pageInfo;
+        if (redisUtil.hasKey(ps)){
+            pageInfo = (PageInfo)redisUtil.get(ps);
+        }
+        else {
+            pageInfo = PageHelper.startPage(currentpage, size).doSelectPageInfo(() -> bookService.findAll());
+            redisUtil.set(ps,pageInfo,3600);
+        }
         return pageInfo;
     }
 
@@ -57,6 +73,13 @@ public class BookController {
         bookService.deleteById(id);
     }
 
-
+    @PostMapping("/retrieval")
+    public List<Book> retrieval(@RequestBody BookRetrievalPOJO bookRetrievalPOJO){
+        System.out.println(bookRetrievalPOJO);
+        String book_name = bookRetrievalPOJO.getBook_name();
+        String author = bookRetrievalPOJO.getAuthor();
+        Integer class_id = bookRetrievalPOJO.getClass_id();
+        return bookService.retrieval(book_name,author,class_id);
+    }
 
 }

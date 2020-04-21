@@ -2,6 +2,7 @@ package com.myvue.springboottest.repository;
 
 import com.myvue.springboottest.entity.Book;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,6 +26,6 @@ public interface BookRepository{
     Book findByIdForUpdate(Integer id);
     int bookBorrowedByBookId(Integer id);
     int bookReturnedByBookId(Integer id);
-
+    List<Book> retrieval(@Param("where") String where);
 
 }

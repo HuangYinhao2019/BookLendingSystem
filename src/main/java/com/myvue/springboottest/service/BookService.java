@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -36,20 +37,8 @@ public class BookService {
     }
 
     public Book findById(Integer id){
-        String key = "book_id " + String.valueOf(id);
-        if (redisUtil.hasKey(key)){
-            System.out.println("从缓存中获取");
-            return (Book)redisUtil.get(key);
-        }
-        else {
-            System.out.println("没有缓存");
-            Book book = bookRepository.findById(id);
-            if (book != null && book.getBook_id() != null) {
-                redisUtil.set(key, book, 3600);
-                System.out.println("记录进缓存");
-            }
-            return book;
-        }
+        Book book = bookRepository.findById(id);
+        return book;
     }
 
     @Transactional
@@ -63,5 +52,44 @@ public class BookService {
         bookRepository.findByIdForUpdate(book.getBook_id());
         return bookRepository.update(book);
     }
+
+    public List<Book> retrieval(String book_name, String author, Integer class_id){
+        String where = "";
+        List<String> target = new ArrayList<>(3);
+        if (book_name != null && book_name.length() > 0){
+            target.add("b.name like '%" + book_name + "%'");
+        }
+        if (author != null && author.length() > 0){
+            target.add("b.author = '" + author + "'");
+        }
+        if (class_id != null){
+            target.add("c.class_id = " + String.valueOf(class_id));
+        }
+        if (target.size() == 0){
+            return bookRepository.findAll();
+        }
+        else {
+            for (int i = 0; i < target.size(); i++) {
+                where = where.concat(target.get(i));
+                if (i != target.size() - 1) {
+                    where = where.concat(" and ");
+                }
+            }
+            if (redisUtil.hasKey(where)){
+                List<Object> objects = redisUtil.rangeList(where, 0, -1);
+                System.out.println("从缓存中取");
+                return (List<Book>)objects.get(0);
+            }
+            else {
+                System.out.println(where);
+                List<Book> bookList = bookRepository.retrieval(where);
+                System.out.println("存入缓存");
+                redisUtil.lSet(where,bookList,3600);
+                return bookList;
+            }
+        }
+
+    }
+
 
 }

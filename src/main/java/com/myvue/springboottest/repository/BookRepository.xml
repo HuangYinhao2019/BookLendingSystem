@@ -27,6 +27,19 @@
         select b.book_id,b.name,b.author,b.ISBN,b.introduction,b.language,b.pubdate,b.class_id,b.left_number,c.class_id c_id,c.class_name c_name from book b LEFT JOIN category c ON b.class_id = c.class_id where b.is_on = 1
     </select>
 
+    <select id="retrieval" resultMap="bookMap">
+        select
+        b.book_id,b.name,b.author,b.ISBN,b.introduction,b.language,b.pubdate,b.class_id,b.left_number,c.class_id c_id,c.class_name c_name
+        from
+        book b
+        LEFT JOIN
+        category c
+        ON
+        b.class_id = c.class_id
+        where
+        b.is_on = 1 and ${where}
+    </select>
+
     <select id="findOffBooks" resultMap="bookMap">
         select b.book_id,b.name,b.author,b.ISBN,b.introduction,b.language,b.pubdate,b.class_id,b.left_number,c.class_id c_id,c.class_name c_name from book b LEFT JOIN category c ON b.class_id = c.class_id where b.is_on = 0
     </select>
